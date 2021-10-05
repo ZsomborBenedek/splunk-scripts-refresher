@@ -20,7 +20,7 @@ javascript: (() => {
 
     const load_scripts = (delay, message) => new Promise(resolve => {
         progressBar.textContent = message;
-        progressBar.style.backgroundColor = 'green';
+        progressBar.style.backgroundColor = 'orange';
         progressBar.style.height = `${progressBar.scrollHeight}px`;
         setTimeout(resolve, delay);
     });
@@ -47,21 +47,22 @@ javascript: (() => {
         }, 2500);
     }
 
-    const url = window.location.origin + '/en-US/debug/refresh';
+    const url = `${window.location.origin}/en-US/debug/refresh`;
+    const location = window.location.origin !== 'null' ? window.location.origin : 'This';
 
     load_scripts(500, 'Reloading scripts...').then(
         fetch(url)
             .then(res => {
-                return res.status >= 400 ? error_scripts(`${window.location.origin} is not a splunk site!`) : res.text();
+                return res.status >= 400 ? error_scripts(`${location} is not a splunk site!`) : res.text();
             })
             .then(html => {
                 let parser = new DOMParser();
                 let page = parser.parseFromString(html, "text/html");
                 page.forms[0].submit();
-                success_scripts('Scripts reloaded!')
+                success_scripts('Scripts reloaded!');
             })
             .catch(err => {
-                error_scripts(window.location.origin + ' is not a splunk site!');
+                error_scripts(`${location} is not a splunk site!`);
             })
     );
 })();
